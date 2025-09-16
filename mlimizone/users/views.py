@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -6,21 +5,19 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.conf import settings
 from .models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, WholesalerProfileSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 
-# Registration endpoint (only for wholesalers)
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
-# Login endpoint (for wholesalers and admins)
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(request, email=email, password=password)
         if user:
-            # Whitelist check for admins
             if user.role == "admin":
                 whitelist = getattr(settings, 'ADMIN_EMAIL_WHITELIST', [])
                 if user.email not in whitelist:
@@ -34,3 +31,13 @@ class AuthenthicationView(APIView):
 
     def get(self, request):
         return Response({"message": f"Hello, {request.user.email}! You are authenticated."})
+
+class ProfileEditView(generics.UpdateAPIView):
+    serializer_class = WholesalerProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        if user.role != 'wholesaler':
+            raise PermissionDenied("Only wholesalers can update their profile.")
+        return user
