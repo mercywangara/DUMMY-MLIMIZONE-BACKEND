@@ -21,3 +21,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include("api.urls")),
 ]
+from django.urls import path, include
+from django.views.generic import RedirectView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/users/', include('users.urls')), 
+    path('', RedirectView.as_view(url='/api/users/login/', permanent=False)),
+]
+

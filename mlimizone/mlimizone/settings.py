@@ -39,6 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'marketPrice',
     'rest_framework',
+    'users', 
+    'rest_framework.authtoken',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+AUTH_USER_MODEL = 'users.User'
+
+ADMIN_EMAIL_WHITELIST = [
+    "ushiadhiambo@gmail.com",
+    "brightjoykaranja@gmail.com",
+    "khembocarol@gmail.com",
+    "tihitnaabraham@gmail.com",
+    "mercywangarakwagalakwe@gmail.com",
 ]
 
 MIDDLEWARE = [
