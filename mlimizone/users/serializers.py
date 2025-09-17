@@ -38,5 +38,5 @@ class WholesalerProfileSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         if password:
             instance.set_password(password)
-        instance.save()
+            instance.save()
         return instance

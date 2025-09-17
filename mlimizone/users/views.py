@@ -32,12 +32,17 @@ class AuthenthicationView(APIView):
     def get(self, request):
         return Response({"message": f"Hello, {request.user.email}! You are authenticated."})
 
-class ProfileEditView(generics.UpdateAPIView):
+class ProfileEditView(generics.RetrieveUpdateAPIView):
     serializer_class = WholesalerProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
+        print("DEBUG: get_object called, user:", self.request.user)
         user = self.request.user
         if user.role != 'wholesaler':
             raise PermissionDenied("Only wholesalers can update their profile.")
         return user
+
+    def put(self, request, *args, **kwargs):
+        print("DEBUG: PUT method called with data:", request.data)
+        return super().put(request, *args, **kwargs)
